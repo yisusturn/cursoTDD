@@ -99,20 +99,68 @@ class ProductTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
+        $category = Category::create([
+            'name' => 'Burger',
+            'description' => 'Its a good burger'
+        ]);
+
         $product = Product::create([
             'name' => 'Test Product',
+            'sku' => Str::slug('Test Product'),
             'description' => 'Test Description',
-            'price' => 1000
+            'price' => 10.2,
+            'stock' => 10,
+            'category_id' => $category->id,
+            'image' => UploadedFile::fake()->image('product.jpg')->hashName(),
         ]);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer '.$this->authenticate(),
         ])->put(route('api.products.update', $product->id), [
-            'name' => 'Updated Product',
-            'description' => 'Updated Description',
-            'price' => 2000
+            'name' => 'Test Product',
+            'description' => 'Test Description',
+            'price' => 10.2,
+            'stock' => 10,
+            'category_id' => $category->id
         ]);
 
+        $productUpdated = Product::find($product->id);
+
+        $this->assertEquals('Test Product', $productUpdated->name);
+        $this->assertEquals('Test Description', $productUpdated->description);
+        $this->assertEquals(Str::slug('Test Product'), $productUpdated->sku);
+        $this->assertEquals(10.2, $productUpdated->price);
+        $this->assertEquals(10, $productUpdated->stock);
+        $this->assertEquals($category->id,$productUpdated->category_id);
+
+        $response->assertStatus(200);
+        $response->assertJsonMissing(['Error']);
+    }
+
+    public function test_a_product_can_be_deleted()
+    {
+        $this->withoutExceptionHandling();
+
+        $category = Category::create([
+            'name' => 'Burger',
+            'description' => 'Its a good burger'
+        ]);
+
+        $product = Product::create([
+            'name' => 'Test Product',
+            'sku' => Str::slug('Test Product'),
+            'description' => 'Test Description',
+            'price' => 10.2,
+            'stock' => 10,
+            'category_id' => $category->id,
+            'image' => UploadedFile::fake()->image('product.jpg')->hashName(),
+        ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$this->authenticate(),
+        ])->delete(route('api.products.delete', $product->id));
+
+        
         $response->assertStatus(200);
     }
 }

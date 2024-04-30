@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 
@@ -27,6 +28,10 @@ Route::get('products/{product}', [ProductController::class, 'show'])->name('api.
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('auth/me', [AuthController::class, 'me'])->name('api.auth.me');
     Route::get('auth/logout', [AuthController::class, 'logout'])->name('api.auth.logout');
+    Route::post('cart/store', [CartController::class, 'store'])->name('api.cart.store');
+    Route::put('cart/update/{cart}', [CartController::class, 'update'])->name('api.cart.update');
+    Route::delete('cart/delete/{cart}', [CartController::class, 'delete'])->name('api.cart.delete');
+    Route::get('cart', [CartController::class, 'index'])->name('api.cart.index');
 
     Route::group(['middleware' => 'admin'], function () {
         Route::post('category/store', [CategoryController::class, 'store'])->name('api.category.store');
@@ -34,5 +39,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::delete('category/delete/{category}', [CategoryController::class, 'delete'])->name('api.category.delete');
 
         Route::post('products/store', [ProductController::class, 'store'])->name('api.products.store');
+        Route::put('products/update/{product}', [ProductController::class, 'update'])->name('api.products.update');
+        Route::delete('products/delete/{product}', [ProductController::class, 'delete'])->name('api.products.delete');
     });
 });
