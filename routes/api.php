@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 
@@ -32,6 +33,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::put('cart/update/{cart}', [CartController::class, 'update'])->name('api.cart.update');
     Route::delete('cart/delete/{cart}', [CartController::class, 'delete'])->name('api.cart.delete');
     Route::get('cart', [CartController::class, 'index'])->name('api.cart.index');
+    Route::get('orders', [OrderController::class, 'orders'])->name('api.orders.index');
+    Route::get('orders/user/', [OrderController::class, 'getByUser'])->name('api.orders.getByUser');
+    Route::post('orders/store', [OrderController::class, 'store'])->name('api.orders.store');
 
     Route::group(['middleware' => 'admin'], function () {
         Route::post('category/store', [CategoryController::class, 'store'])->name('api.category.store');
